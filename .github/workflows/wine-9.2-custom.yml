@@ -1,19 +1,17 @@
-name: Wine-32on64-WoW64 CI
+name: wine-9.2-custom CI
 
 on:
-  schedule:
-    - cron:  '0 0 1 * *'
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download artifact
         id: download-artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v3
         with:
           workflow: bootstraps.yml
           workflow_conclusion: success
@@ -23,13 +21,12 @@ jobs:
           sudo apt update
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
-          chmod +x build_wine.sh
-          export WINE_VERSION="latest"
+          chmod +x build_wine-9.2-custom.sh
+          export WINE_VERSION="9.2"
           export EXPERIMENTAL_WOW64="true"
-          WINE_BRANCH=vanilla ./build_wine.sh
-          WINE_BRANCH=staging ./build_wine.sh
+          WINE_BRANCH=vanilla ./build_wine-9.2-custom.sh
           sha256sum *.tar.xz
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: Wine-32on64-WoW64
+          name: wine-9.2-custom
           path: ./*.tar.xz

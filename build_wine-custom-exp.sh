@@ -258,13 +258,13 @@ else
                 BUILD_NAME="${WINE_VERSION}-$(git -C wine rev-parse --short HEAD)"
         else
                 BUILD_NAME="${WINE_VERSION}"
-                git clone https://gitlab.winehq.org/wine/wine.git wine
-                #git clone -b wine-9.2-custom-fixmapshared https://github.com/on-that-tiger-mountain/wine-9.2-custom.git wine
-                cd wine
-                git checkout 06531b1d9898ba3ac3b7c69d6192682202606f8f
-                cd ..
-                patch -d wine -Np1 < "${scriptdir}"/wpcap.patch
-                patch -d wine -Np1 < "${scriptdir}"/rets-revert.patch
+                #git clone https://gitlab.winehq.org/wine/wine.git wine
+                git clone -b custom-wine-9.16-fix https://github.com/on-that-tiger-mountain/wine-custom.git wine
+                #cd wine
+                #git checkout 06531b1d9898ba3ac3b7c69d6192682202606f8f
+                #cd ..
+                #patch -d wine -Np1 < "${scriptdir}"/wpcap.patch
+                #patch -d wine -Np1 < "${scriptdir}"/rets-revert.patch
         fi
 
         if [ "${WINE_BRANCH}" = "staging" ]; then
@@ -364,33 +364,33 @@ export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
 
 mkdir "${BUILD_DIR}"/build64
 cd "${BUILD_DIR}"/build64 || exit
-${BWRAP64} "${BUILD_DIR}"/wine/configure --enable-win64 --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-amd64
+${BWRAP64} "${BUILD_DIR}"/wine/configure --enable-archs=i386,x86_64 --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-amd64
 ${BWRAP64} make -j$(nproc)
 ${BWRAP64} make install
 
-export CROSSCC="${CROSSCC_X32}"
-export CROSSCXX="${CROSSCXX_X32}"
-export CFLAGS="${CFLAGS_X32}"
-export CXXFLAGS="${CFLAGS_X32}"
-export CROSSCFLAGS="${CROSSCFLAGS_X32}"
-export CROSSCXXFLAGS="${CROSSCFLAGS_X32}"
+#export CROSSCC="${CROSSCC_X32}"
+#export CROSSCXX="${CROSSCXX_X32}"
+#export CFLAGS="${CFLAGS_X32}"
+#export CXXFLAGS="${CFLAGS_X32}"
+#export CROSSCFLAGS="${CROSSCFLAGS_X32}"
+#export CROSSCXXFLAGS="${CROSSCFLAGS_X32}"
 
-mkdir "${BUILD_DIR}"/build32-tools
-cd "${BUILD_DIR}"/build32-tools || exit
-PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/i386-linux-gnu/pkgconfig ${BWRAP32} "${BUILD_DIR}"/wine/configure --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-x86
-${BWRAP32} make -j$(nproc)
-${BWRAP32} make install
+#mkdir "${BUILD_DIR}"/build32-tools
+#cd "${BUILD_DIR}"/build32-tools || exit
+#PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/i386-linux-gnu/pkgconfig ${BWRAP32} "${BUILD_DIR}"/wine/configure --prefix "${BUILD_DIR}"/wine-"${BUILD_NAME}"-x86
+#${BWRAP32} make -j$(nproc)
+#${BWRAP32} make install
 
-export CFLAGS="${CFLAGS_X64}"
-export CXXFLAGS="${CFLAGS_X64}"
-export CROSSCFLAGS="${CROSSCFLAGS_X64}"
-export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
+#export CFLAGS="${CFLAGS_X64}"
+#export CXXFLAGS="${CFLAGS_X64}"
+#export CROSSCFLAGS="${CROSSCFLAGS_X64}"
+#export CROSSCXXFLAGS="${CROSSCFLAGS_X64}"
 
-mkdir "${BUILD_DIR}"/build32
-cd "${BUILD_DIR}"/build32 || exit
-PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/i386-linux-gnu/pkgconfig ${BWRAP32} "${BUILD_DIR}"/wine/configure --with-wine64="${BUILD_DIR}"/build64 --with-wine-tools="${BUILD_DIR}"/build32-tools --prefix "${BUILD_DIR}"/wine-${BUILD_NAME}-amd64
-${BWRAP32} make -j$(nproc)
-${BWRAP32} make install
+#mkdir "${BUILD_DIR}"/build32
+#cd "${BUILD_DIR}"/build32 || exit
+#PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig:/usr/local/lib/i386-linux-gnu/pkgconfig ${BWRAP32} "${BUILD_DIR}"/wine/configure --with-wine64="${BUILD_DIR}"/build64 --with-wine-tools="${BUILD_DIR}"/build32-tools --prefix "${BUILD_DIR}"/wine-${BUILD_NAME}-amd64
+#${BWRAP32} make -j$(nproc)
+#${BWRAP32} make install
 
 echo
 echo "Compilation complete"
@@ -424,9 +424,10 @@ for build in ${builds_list}; do
                 fi
 
                 if [ "${EXPERIMENTAL_WOW64}" = "true" ]; then
-                        rm "${build}"/bin/wine "${build}"/bin/wine-preloader
-                        cp "${build}"/bin/wine64 "${build}"/bin/wine
-                        rm -rf "${build}"/lib/wine/i386-unix
+                        #rm "${build}"/bin/wine "${build}"/bin/wine-preloader
+                        #cp "${build}"/bin/wine64 "${build}"/bin/wine
+                        cp "${build}"/bin/wine "${build}"/bin/wine64
+                        #rm -rf "${build}"/lib/wine/i386-unix
                 fi
 
                 tar -Jcf "${build}".tar.xz "${build}"

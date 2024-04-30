@@ -1,4 +1,4 @@
-name: Wine-Git CI
+name: wine-9.20-custom CI
 
 on:
   workflow_dispatch:
@@ -21,12 +21,12 @@ jobs:
           sudo apt update
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
           sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
-          chmod +x build_wine.sh
-          export WINE_VERSION="git"
-          WINE_BRANCH=vanilla ./build_wine.sh
-          WINE_BRANCH=staging ./build_wine.sh
+          chmod +x build_wine-test.sh
+          export WINE_VERSION="9.20"
+          export EXPERIMENTAL_WOW64="true"
+          WINE_BRANCH=vanilla ./build_wine-test.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v4
         with:
-          name: Wine-Git
+          name: wine-9.20-custom
           path: ./*.tar.xz

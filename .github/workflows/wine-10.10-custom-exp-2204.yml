@@ -1,4 +1,4 @@
-name: Wine-Git CI
+name: wine-10.10-custom-exp-2204 CI
 
 on:
   workflow_dispatch:
@@ -13,20 +13,22 @@ jobs:
         id: download-artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          workflow: bootstraps.yml
+          workflow: bootstraps-2204.yml
           workflow_conclusion: success
           path: /opt
       - name: Build Wine
         run: |
           sudo apt update
           sudo apt install debootstrap perl git wget xz-utils bubblewrap autoconf
-          sudo tar -C /opt -xpf /opt/Bootstraps/bootstraps.tar.xz
-          chmod +x build_wine.sh
-          export WINE_VERSION="git"
-          WINE_BRANCH=vanilla ./build_wine.sh
-          WINE_BRANCH=staging ./build_wine.sh
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_unconfined=0
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          sudo tar -C /opt -xpf /opt/Bootstraps-2204/bootstraps.tar.xz
+          chmod +x build_wine-10.10-custom-exp-2204.sh
+          export WINE_VERSION="10.10"
+          export EXPERIMENTAL_WOW64="true"
+          WINE_BRANCH=vanilla ./build_wine-10.10-custom-exp-2204.sh
           sha256sum *.tar.xz
       - uses: actions/upload-artifact@v4
         with:
-          name: Wine-Git
+          name: wine-10.10-custom-exp-2204
           path: ./*.tar.xz
