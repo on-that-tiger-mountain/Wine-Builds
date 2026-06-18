@@ -259,7 +259,7 @@ else
         else
                 BUILD_NAME="${WINE_VERSION}"
                 #git clone https://gitlab.winehq.org/wine/wine.git wine
-                git clone -b wine-test https://github.com/on-that-tiger-mountain/wine.git wine
+                git clone -b wine-devel-10.10 https://github.com/on-that-tiger-mountain/wine.git wine
                 #git clone https://github.com/on-that-tiger-mountain/wine-9.2-custom.git wine
                 #cd wine
                 #git checkout 0d08c24eb569664cab937390f8b03b42c1d380c8
